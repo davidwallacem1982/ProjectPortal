@@ -1,0 +1,212 @@
+﻿@model IEnumerable<Portal.Core.Models.ContatosPortalViewModel>
+
+@{
+    ViewData["Title"] = "Todos os Contatos";
+}
+@*@Html.Hidden(modelItem => itemT.Titulo)*@
+<link href="~/css/styleButtons.css" rel="stylesheet" />
+<link href="~/flexbox/css/VisualizarSinistro.css" rel="stylesheet" />
+
+<style>
+    @@keyframes fa-blink {
+     0% { opacity: 1; }
+     50% { opacity: 0.5; }
+     100% { opacity: 0; }
+     }
+    .fa-blink {
+        -webkit-animation: fa-blink 1.00s linear infinite;
+        -moz-animation: fa-blink 1.00s linear infinite;
+        -o-animation: fa-blink 1.00s linear infinite;
+        animation: fa-blink 1.00s linear infinite;
+    }
+</style>
+
+@if (ViewBag.Tipo)
+{
+    <a href="/Contatos/CadastroContatos" style="cursor:pointer" data-original-title="" title="" id="esconderItem1">
+        <i class="fa fa-address-book fa-3" aria-hidden="true"></i>
+        <span class="menu-title">Link de acesso ao Cadastro de Contatos</span>
+    </a>
+}
+
+<h2 class="cabecalhoInicial">Contatos</h2>
+<div class="panel">
+    <!--Block Styled Form -->
+    <!--===================================================-->
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white" id="tituloContato" onload="adicionar('@Html.DisplayFor(m => Model.ElementAt(i).Titulo)')">@Html.DisplayFor(m => Model.ElementAt(i).Titulo)</h3>
+                @for (int j = 0; j < Model.ElementAt(i).Itens.Count; j++)
+                {
+                    <p>
+                        <strong>@Html.DisplayFor(m => Model.ElementAt(i).Itens.ElementAt(j).Cargo): </strong>@Html.DisplayFor(m => Model.ElementAt(i).Itens.ElementAt(j).Nome)
+                        @if (ViewBag.Tipo)
+                        {
+                            <span> - <strong class=" fa-blink"><a href="/Contatos/EditarContatos?Id=@Html.DisplayFor(m => Model.ElementAt(i).Itens.ElementAt(j).Id)" id="alertaesqueceu" style=" color:#fff;" !important;">Clique no link para editar esse Contato</a></strong></span>
+                        }
+                    </p>
+                    if (!string.IsNullOrWhiteSpace(Model.ElementAt(i).Itens.ElementAt(j).Telefone))
+                    {
+                        <p><strong>Telefone: </strong><span id="telMask">@Html.DisplayFor(m => Model.ElementAt(i).Itens.ElementAt(j).Telefone)</span></p>
+                    }
+                    <p><strong>E-mail: </strong>@Html.DisplayFor(m => Model.ElementAt(i).Itens.ElementAt(j).Email)</p>
+                    if (!string.IsNullOrWhiteSpace(Model.ElementAt(i).Itens.ElementAt(j).Site) )
+                    {
+                        <p><strong>Site: </strong>@Html.DisplayFor(m => Model.ElementAt(i).Itens.ElementAt(j).Site)</p>
+                    }
+                }
+            </div>
+        </div>
+        <br />
+    }
+
+    @*<div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Técnica de Transportes Nacional (Embarcador e Transportador) e Pedido de Cobertura Extra</strong></h3>
+                <p><strong>Tecnico:</strong> Daniela Romão</p>
+                <p><strong>E-mail:</strong><a href="mailto:tecnica1@tradevaleseguros.com.br?subject=Questions" title="" style="color:white">  tecnica1@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Edilaine Lopes </p>
+                <p><strong>E-mail:</strong><a href="mailto:tecnica4@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> tecnica4@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> Mauricio Palma</p>
+                <p><strong>E-mail:</strong><a href="mailto:internacional@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> internacional@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Sandra Batista</p>
+                <p><strong>E-mail:</strong><a href="mailto:tecnica2@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> tecnica2@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> William Franco</p>
+                <p><strong>E-mail:</strong><a href="mailto:comercial15@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> comercial15@tradevaleseguros.com.br</a></p>
+                <p><strong>Pedidos de Cobertura Extra</strong></p>
+                <p><strong>E-mail:</strong><a href="mailto:coberturaextra@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> coberturaextra@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Técnica de Transportes Internacional</strong></h3>
+                <p><strong>Tecnico:</strong> Mauricio Palma </p>
+                <p><strong>E-mail:</strong><a href="mailto:internacional@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> internacional@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Faturamento dos movimentos de transporte</strong></h3>
+                <p><strong>Tecnica:</strong> Kellen Alves</p>
+                <p><strong>E-mail:</strong><a href="mailto:faturamento6@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> faturamento6@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Mariana Carvalho</p>
+                <p><strong>E-mail:</strong><a href="mailto:tecnica3@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> tecnica3@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Tecnica7</p>
+                <p><strong>E-mail:</strong><a href="mailto:tecnica7@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> tecnica7@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Pendência de Pagamentos</strong></h3>
+                <p><strong>Tecnica:</strong> Magali Sagayama</p>
+                <p><strong>E-mail:</strong><a href="mailto:finan@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> finan@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Sinistros de Transportes Nacional</strong></h3>
+                <p><strong>Tecnica:</strong> Marcia Manni</p>
+                <p><strong>E-mail:</strong><a href="mailto:marcia.manni@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> marcia.manni@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> Rafael Amado</p>
+                <p><strong>E-mail:</strong><a href="mailto:sinistros1@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> sinistros1@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Caroline Santos</p>
+                <p><strong>E-mail:</strong><a href="mailto:sinistros2@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> sinistros4@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Livia Miranda</p>
+                <p><strong>E-mail:</strong><a href="mailto:sinistros4@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> sinistros4@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Sinistros de Riscos Diversos e Transporte Internacional</strong></h3>
+                <p><strong>Tecnico:</strong> Gilberto Oliveira</p>
+                <p><strong>E-mail:</strong><a href="mailto:sinistros@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> sinistros@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Lívia Miranda</p>
+                <p><strong>E-mail:</strong><a href="mailto:sinistros4@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> sinistros4@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Prevenção de Perdas</strong></h3>
+                <p><strong>Gerente Departamento:</strong> Erik Costa</p>
+                <p><strong>E-mail:</strong><a href="mailto:erik.costa@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> erik.costa@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> Daniel Toshio</p>
+                <p><strong>E-mail:</strong><a href="mailto:gerenciamento14@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> gerenciamento14@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> Luiz Martins</p>
+                <p><strong>E-mail:</strong><a href="mailto:gerenciamento8@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> gerenciamento8@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> Márcio Américo</p>
+                <p><strong>E-mail:</strong><a href="mailto:gerenciamento9@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> gerenciamento9@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> Marcelo Rodrigues</p>
+                <p><strong>E-mail:</strong><a href="mailto:gerenciamento12@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> gerenciamento12@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> Nilson Ribeiro</p>
+                <p><strong>E-mail:</strong><a href="mailto:gerenciamento10@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> gerenciamento10@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Seguro de Frota, Empresarial, Vida, Garantia, Agricola e Riscos Diversos</strong></h3>
+                <p><strong>Tecnica:</strong> Kali Gundim</p>
+                <p><strong>E-mail:</strong><a href="mailto:seguros2@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> seguros2@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Nicolly Faria</p>
+                <p><strong>E-mail:</strong><a href="mailto:seguros1@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> seguros1@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Juliana Patrocínio</p>
+                <p><strong>E-mail:</strong><a href="mailto:seguros3@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> seguros3@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Stefany Prado</p>
+                <p><strong>E-mail:</strong><a href="mailto:seguros4@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> seguros4@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnico:</strong> Wanderley Menezes</p>
+                <p><strong>E-mail:</strong><a href="mailto:seguros5@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> seguros5@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Parceiros</strong></h3>
+                <p><strong>Gerente Departamento:</strong> Rose Biondi</p>
+                <p><strong>E-mail:</strong><a href="mailto:rose@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> rose@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Liliam Lorosa</p>
+                <p><strong>E-mail:</strong><a href="mailto:liliam.lorosa@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> liliam.lorosa@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Maria do Carmo</p>
+                <p><strong>E-mail:</strong><a href="mailto:assessoria4@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> assessoria4@tradevaleseguros.com.br</a></p>
+                <p><strong>Tecnica:</strong> Fernando Pessoa</p>
+                <p><strong>E-mail:</strong><a href="mailto:assessoria@tradevaleseguros.com.br?subject=Questions" title="" style="color:white"> assessoria@tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div style="padding-left: 10px; color:white">
+                <h3 style="color:white"><strong>Suporte</strong></h3>
+                <p><strong>Desenvolvedor:</strong> David Wallace Marques Ferreira</p>
+                <p><strong>Cel:</strong> (11)97968-0500</p>
+                <p><strong>E-mail:</strong><a href="mailto:desenvolvimento1@tnix.com.br?subject=Questions" title="" style="color:white"> desenvolvimento1@tnix.com.br</a></p>
+                <p><strong>Site:</strong><a href="http://www.tradevaleseguros.com.br/" title="" style="color:white"> http://www.tradevaleseguros.com.br</a></p>
+            </div>
+        </div>
+        <br />*@
+    <div class="row justify-content-end" style="width:100%;margin-left: 0px;margin-right: 0px;">
+        <div id="divVoltarButton">
+            <button type="button" class="btn btn-primary colorbuttonPadrao" data-dismiss="modal" onclick="Voltar()">
+                <i class="fa fa-undo-alt fa-fw"></i> Voltar
+            </button>
+        </div>
+    </div>
+    <!--===================================================-->
+    <!--End Block Styled Form -->
+</div>
+<!--jQuery [ REQUIRED ]-->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://unpkg.com/imask"></script>
+<script type="text/javascript">
+
+    function Voltar() {
+        window.document.location = '@HttpContextAccessor.HttpContext.Session.GetString("DefaultHome")';
+    }
+
+</script>

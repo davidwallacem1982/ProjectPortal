@@ -1,0 +1,90 @@
+﻿@model AlterarSenhaViewModel
+
+@{
+    ViewData["Title"] = "Alterar Senha do Usuário";
+}
+<div class="center-block" style="width:450px;">
+    <div class="modal-dialog text-center col-lg-12">
+        <h2 class="text-center">Alterar Senha do Usuário</h2>
+        <div class="col-sm-12 main-section">
+            <div class="modal-content">
+                <br />
+                <div class="col-12 user-img">
+                    <img class="img-circle" src="@HttpContextAccessor.HttpContext.Session.GetString("PathLogo")" alt="Profile Picture" style="width:140px; height:150px;">
+                </div>
+                <h4 class="title title-primary">Por favor, preencha todos os campos abaixo para alterar sua senha!</h4>
+                <div class="alert alert-success" id="msn-sucess" style="display:none; height:100%; margin-top:15px; font-size:10pt">
+                    <h4>
+                        <strong>Sucesso! <br /></strong>
+                        <span id="sucessmsg"></span>
+                    </h4>
+                </div>
+                <div class="alert alert-danger" id="err-alert" style="display:none; height:100%; margin-top:15px; font-size:10pt">
+                    <h4>
+                        <strong>Erro! <br /></strong>
+                        <span id="errmsg"></span>
+                    </h4>
+                </div>
+                @using (Html.BeginForm("AlterarSenha", "Account", FormMethod.Post, new { id = "Cadastro", @class = "col-12" }))
+                {
+                    <div class="form-group" id="Senha-group">
+                        @Html.EditorFor(a => a.PasswordAtual, new { htmlAttributes = new { @style = "height:40px; color: #3D3D54; text-align: left; font-size: 18px;", @class = "form-control", placeholder = "Senha Atual" } })
+                    </div>
+                    <div class="form-group" id="Senha-group">
+                        @Html.EditorFor(a => a.Password, new { htmlAttributes = new { @style = "height:40px; color: #3D3D54; text-align: left; font-size: 18px;", @class = "form-control", placeholder = "Nova Senha" } })
+                    </div>
+                    <div class="form-group" id="Senha-group">
+                        @Html.EditorFor(a => a.ConfirmPassword, new { htmlAttributes = new { @style = "height:40px; color: #3D3D54; text-align: left; font-size: 18px;", @class = "form-control", placeholder = "Confirmar Nova Senha" } })
+                    </div>
+                    <button type="submit" class="btn btn-primary colorbuttonPadrao" id="passbtn">
+                        <i class="far fa-save"></i>  Salvar
+                    </button>
+                    <button type="button" class="btn btn-primary colorbuttonPadrao" data-dismiss="modal" onclick="Voltar()">
+                        <i class="fa fa-undo-alt fa-fw"></i> Voltar
+                    </button>
+                }
+                <br />
+                <br />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var body = document.querySelector("body");
+
+    $("#Cadastro").submit(function (e) {
+        e.preventDefault();
+    });
+
+    function Voltar() {
+        window.document.location = '/Perfil/Index';
+    }
+
+    $("#passbtn").click(function(){
+        var url = '@Url.Action("AlterarSenha","Account")';
+        $.post({
+            url: url,
+            data: {
+                PasswordAtual: $("#PasswordAtual").val(),
+                Password: $("#Password").val(),
+                ConfirmPassword: $("#ConfirmPassword").val()
+            },
+            success: function (returnData) {
+                if (returnData.ok == true) {
+                    $("#sucessmsg").text(returnData.message);
+                    $("#msn-sucess").fadeTo(4000, 1000).slideUp(500, function ()
+                    {
+                        $("#msn-sucess").slideUp(1000);
+                    });
+                }
+                else {
+                    $("#errmsg").text(returnData.message);
+                    $("#err-alert").fadeTo(5000, 1000).slideUp(500, function() {
+                        $("#err-alert").slideUp(1000);
+                    });
+                }
+            },
+        });
+    });
+</script>

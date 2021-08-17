@@ -1,0 +1,481 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!doctype html>
+<html lang=pt-br>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>@ViewData["Title"] - Portal</title>
+    <!--Bootstrap-->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!--LayoutTnix Stylesheet-->
+    <link href="~/css/layouttnix.css" rel="stylesheet" />
+    <!--Nifty Stylesheet-->
+    <link href="~/css/nifty.min.css" rel="stylesheet" />
+    <!--Nifty Premium Icon-->
+    <link href="~/css/demo/nifty-demo-icons.min.css" rel="stylesheet" />
+    <!--fontawesome Icon-->
+    <link href="~/fontawesome/css/all.css" rel="stylesheet" />
+    <!--DataTable-->
+    <link href="~/lib/datatable/css/datatables.css" rel="stylesheet" />
+    <link href="~/lib/datatable/css/responsive.dataTables.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/datatable/js/datatables.js"></script>
+    <script src="~/lib/datatable/js/dataTables.responsive.js"></script>
+    <!--=================================================-->
+    <!--Pace - Page Load Progress Par [OPTIONAL]-->
+    <link href="~/plugins/pace/pace.min.css" rel="stylesheet" />
+    <script src="~/plugins/pace/pace.min.js"></script>
+    <!--=================================================
+
+    REQUIRED
+    You must include this in your project.
+
+
+    RECOMMENDED
+    This category must be included but you may modify which plugins or components which should be included in your project.
+
+
+    OPTIONAL
+    Optional plugins. You may choose whether to include it in your project or not.
+
+
+    DEMONSTRATION
+    This is to be removed, used for demonstration purposes only. This category must not be included in your project.
+
+
+    SAMPLE
+    Some script samples which explain how to initialize plugins or components. This category should not be included in your project.
+
+
+    Detailed information and more samples can be found in the document.
+
+    =================================================-->
+    @*<style type="text/css">
+            .jqstooltip {
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                visibility: hidden;
+                background: rgb(0, 0, 0) transparent;
+                background-color: rgba(0,0,0,0.6);
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+                -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+                color: white;
+                font: 10px arial, san serif;
+                text-align: left;
+                white-space: nowrap;
+                padding: 5px;
+                border: 1px solid white;
+                z-index: 10000;
+            }
+
+            .jqsfield {
+                color: white;
+                font: 10px arial, san serif;
+                text-align: left;
+            }
+        </style>*@
+</head>
+
+<!--TIPS-->
+<!--You may remove all ID or Class names which contain "demo-", they are only used for demonstration. -->
+<body>
+    @*<div class="pace  pace-inactive">
+            <div class="pace-progress" data-progress-text="100%" data-progress="99" style="width: 100%;">
+                <div class="pace-progress-inner"></div>
+            </div>
+            <div class="pace-activity"></div>
+        </div>*@
+    <div id="container" class="effect aside-float aside-bright mainnav-sm">
+
+        <!--NAVBAR-->
+        <!--===================================================-->
+        <header id="navbar">
+            <div id="navbar-container" class="boxed">
+
+                <!--Brand logo & name-->
+                <!--================================-->
+                <div class="navbar-header">
+                    <a href="@HttpContextAccessor.HttpContext.Session.GetString("DefaultHome")" class="navbar-brand">
+                        <img src="~/img/logo.png" alt="Trade Logo" class="brand-icon">
+                        <div class="brand-title">
+                            <span class="brand-text" style="width: 161px;background:#fff;color:#25476a;">Trade Vale</span>
+                        </div>
+                    </a>
+                </div>
+                <!--================================-->
+                <!--End brand logo & name-->
+                <!--Navbar Dropdown-->
+                <!--================================-->
+                <div class="navbar-content">
+                    <ul class="nav navbar-top-links">
+
+                        <!--Navigation toogle button-->
+                        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                        <li class="tgl-menu-btn">
+                            <a class="mainnav-toggle" id="mainnavtoggle" href="#">
+                                <i class="demo-pli-list-view"></i>
+                            </a>
+                        </li>
+                        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                        <!--End Navigation toogle button-->
+                        <!--Search-->
+                        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                        @*<li>
+                                <div class="custom-search-form">
+                                    <label class="btn btn-trans" for="search-input" data-toggle="collapse" data-target="#nav-searchbox">
+                                        <i class="demo-pli-magnifi-glass"></i>
+                                    </label>
+                                    <form>
+                                        <div class="search-container collapse" id="nav-searchbox">
+                                            <input id="search-input" type="text" class="form-control" placeholder="Type for search...">
+                                        </div>
+                                    </form>
+                                </div>
+                            </li>*@
+                        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                        <!--End Search-->
+
+                    </ul>
+                    <ul class="nav navbar-top-links">
+                        <!--Notification dropdown-->
+                        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                        <li class="dropdown">
+                            <img src="~/img/logo-Trade.svg"  style="height: 60px; margin-top:10px"/>
+                            @*<a href="#" data-toggle="dropdown">
+                                <i class="demo-pli-bell"></i>
+                                <span class="badge badge-header badge-danger"></span>
+                            </a>*@
+
+
+                            <!--Notification dropdown menu-->
+                            <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">
+                                <div class="nano scrollable has-scrollbar" style="height: 0px;">
+                                    <div class="nano-content" tabindex="0" style="right: -17px;">
+                                        <ul class="head-list">
+                                            <li>
+                                                <a class="media" href="#">
+                                                    <span class="label label-success pull-right" style="margin-bottom: 5px;">Aprovado</span>
+                                                    <div class="media-left">
+                                                        <i class="far fa-file-image fa-2x"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <p class="text-main text-semibold">FOTOS</p>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="media" href="#">
+                                                    <span class="label label-info pull-right" style="margin-bottom: 5px;">Novo</span>
+                                                    <div class="media-left">
+                                                        <i class="far fa-file-pdf fa-2x"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <p class="text-main text-semibold">AVERBAÇÃO - IDENTIFICAÇÃO DA AVERBAÇÃO DAS MERCADORIAS/NOTAS FISCAIS EMBARCADAS</p>
+                                                        <small>Solicitado a 8 horas atras</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="media" href="#">
+                                                    <span class="label label-info pull-right" style="margin-bottom: 5px;">Novo</span>
+                                                    <div class="media-left">
+                                                        <i class="far fa-file-word fa-2x"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <p class="text-main text-semibold">NOTA FISCAL</p>
+                                                        <small>Solicitado a 1 horas atras</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="media" href="#">
+                                                    <span class="label label-success pull-right" style="margin-bottom: 5px;">Aprovado</span>
+                                                    <div class="media-left">
+                                                        <i class="far fa-file-pdf fa-2x"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <p class="text-main text-semibold">CONTAINER - VALOR RESIDUAL</p>
+                                                        <small>Recusado a 4 minutos</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="media" href="#">
+                                                    <span class="label label-warning pull-right" style="margin-bottom: 5px;">Em Análise</span>
+                                                    <div class="media-left">
+                                                        <i class="far fa-file-word fa-2x"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <p class="text-main text-semibold">CTE - CONHECIMENTO RODOVIÁRIO</p>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="media" href="#">
+                                                    <span class="label label-default pull-right" style="margin-bottom: 5px;">Recusado</span>
+                                                    <div class="media-left">
+                                                        <i class="far fa-file-word fa-2x"></i>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <p class="text-main text-semibold">AVISO SINISTRO SEGURADORA</p>
+                                                        <small>Recusado a 5 horas atras</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="nano-pane" style="display: none;"><div class="nano-slider" style="height: 20px; transform: translate(0px, 0px);"></div></div>
+                                </div>
+
+                                <!--Dropdown footer-->
+                                <div class="pad-all bord-top">
+                                    <a href="#" class="btn-link text-main box-block">
+                                        <i class="pci-chevron chevron-right pull-right"></i>Show All Notifications
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                        <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+                        <!--End notifications dropdown-->
+                    </ul>
+                </div>
+                <!--================================-->
+                <!--End Navbar Dropdown-->
+
+            </div>
+        </header>
+        <!--===================================================-->
+        <!--END NAVBAR-->
+
+        <div class="boxed">
+
+            <!--CONTENT CONTAINER-->
+            <!--===================================================-->
+            <div id="content-container">
+                <div id="page-head">
+
+                    <div style="padding-left:20px;padding-top:10px;padding-bottom:0px;">
+                        <h3 style="margin-top:0px;margin-bottom:0px;">@HttpContextAccessor.HttpContext.Session.GetString("ClientesNome")</h3>
+                    </div>
+                </div>
+
+
+                <!--Page content-->
+                <!--===================================================-->
+                <div id="page-content">
+
+                    <div class="panel panel-body text-left">
+                        <div class="panel-body">
+                            @RenderBody()
+                        </div>
+                    </div>
+
+                </div>
+                <!--===================================================-->
+                <!--End page content-->
+
+            </div>
+            <!--===================================================-->
+            <!--END CONTENT CONTAINER-->
+            <!--MAIN NAVIGATION-->
+            <!--===================================================-->
+            <nav id="mainnav-container">
+                <div id="mainnav">
+                    <!--Menu-->
+                    <!--================================-->
+                    <div id="mainnav-menu-wrap">
+                        <div class="nano has-scrollbar">
+                            <div class="nano-content" tabindex="0" style="right: -17px;">
+
+                                <!--Profile Widget-->
+                                <!--================================-->
+                                <div id="mainnav-profile" class="mainnav-profile">
+                                    <div class="profile-wrap text-center">
+                                        <div class="pad-btm">
+                                            <img class="img-circle" src="@HttpContextAccessor.HttpContext.Session.GetString("PathLogo")" style="width:140px; height:150px;" alt="Profile Picture">
+                                        </div>
+                                        <a href="#profile-nav" class="box-block" data-toggle="collapse" aria-expanded="false">
+                                            <p class="mnp-name">@HttpContextAccessor.HttpContext.Session.GetString("UserName")</p>
+                                            <span class="mnp-desc">@HttpContextAccessor.HttpContext.Session.GetString("UserEmail")</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+
+                                <!--Shortcut buttons-->
+                                <!--================================-->
+                                <div id="mainnav-shortcut" class="hidden">
+                                    <ul class="list-unstyled shortcut-wrap">
+                                        <li class="col-xs-3" data-content="My Profile" data-original-title="" title="">
+                                            <a class="shortcut-grid" href="#">
+                                                <div class="icon-wrap icon-wrap-sm icon-circle bg-mint">
+                                                    <i class="demo-pli-male"></i>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="col-xs-3" data-content="Messages" data-original-title="" title="">
+                                            <a class="shortcut-grid" href="#">
+                                                <div class="icon-wrap icon-wrap-sm icon-circle bg-warning">
+                                                    <i class="demo-pli-speech-bubble-3"></i>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="col-xs-3" data-content="Activity" data-original-title="" title="">
+                                            <a class="shortcut-grid" href="#">
+                                                <div class="icon-wrap icon-wrap-sm icon-circle bg-success">
+                                                    <i class="demo-pli-thunder"></i>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="col-xs-3" data-content="Lock Screen" data-original-title="" title="">
+                                            <a class="shortcut-grid" href="#">
+                                                <div class="icon-wrap icon-wrap-sm icon-circle bg-purple">
+                                                    <i class="demo-pli-lock-2"></i>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!--================================-->
+                                <!--End shortcut buttons-->
+
+
+                                <ul id="mainnav-menu" class="list-group">
+                                    <!--Category name-->
+                                    <li class="list-header">Menu</li>
+                                    <li class="list-divider"></li>
+                                    <!--Menu list item-->
+                                    <li>
+                                        <a href="@HttpContextAccessor.HttpContext.Session.GetString("DefaultHome")" style="cursor:pointer">
+                                            <i class="fas fa-home"></i>
+                                            <span class="menu-title">Home</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-divider"></li>
+                                    <!--Menu list item-->
+                                    <li>
+                                        <a href="@Url.Action("Index", "Perfil")" style="cursor:pointer">
+                                            <i class="demo-pli-male icon-lg icon-fw"></i>
+                                            <span class="menu-title">Perfil</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-divider"></li>
+                                    <!--Menu list item-->
+                                    <li>
+                                        <a href="@Url.Action("Index", "Contatos")" style="cursor:pointer">
+                                            <i class="demo-pli-information icon-lg icon-fw"></i>
+                                            <span class="menu-title">Contato</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-divider"></li>
+                                    <!--Menu list item-->
+                                    <li>
+                                        <a href="@Url.Action("Logout", "Account")" style="cursor:pointer">
+                                            <i class="demo-pli-unlock icon-lg icon-fw"></i>
+                                            <span class="menu-title">Sair</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-divider"></li>
+                                </ul>
+                            </div>
+                            <div class="nano-pane" style="display: none;"><div class="nano-slider" style="height: 4141px; transform: translate(0px, 0px);"></div></div>
+                        </div>
+                    </div>
+                    <!--================================-->
+                    <!--End menu-->
+
+                </div>
+            </nav>
+            <!--===================================================-->
+            <!--END MAIN NAVIGATION-->
+
+        </div>
+
+
+
+        <!-- FOOTER -->
+        <!--===================================================-->
+        <footer id="footer">
+
+            <!-- Visible when footer positions are fixed -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <div class="show-fixed pad-rgt pull-right">
+                You have <a href="#" class="text-main"><span class="badge badge-danger">3</span> pending action.</a>
+            </div>
+
+
+
+            <!-- Visible when footer positions are static -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <div class="hide-fixed pull-right pad-rgt">
+                <span id="dtCompleta"></span> - Versão do Sistema <strong>@ViewBag.versao</strong>.
+            </div>
+
+
+
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+            <!-- Remove the class "show-fixed" and "hide-fixed" to make the content always appears. -->
+            <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+            <p class="copyright" style="padding-left:10px;">Copyright <i class="fa fa-copyright"></i> Portal Trade Vale Seguros 2020 - Todos os direitos reservados.</p>
+
+
+
+        </footer>
+        <!--===================================================-->
+        <!-- END FOOTER -->
+        <!-- SCROLL PAGE BUTTON -->
+        <!--===================================================-->
+        <button class="scroll-top btn">
+            <i class="pci-chevron chevron-up"></i>
+        </button>
+        <!--===================================================-->
+        <div class="mainnav-backdrop"></div>
+    </div>
+    <!--===================================================-->
+    <!-- END OF CONTAINER -->
+    @RenderSection("Scripts", required: false)
+    <!--JAVASCRIPT-->
+    <!--=================================================-->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <!--LayoutTnixJS-->
+    <script src="~/js/layouttnix.min.js"></script>
+    <!--NiftyJS-->
+    <script src="~/js/nifty.min.js"></script>
+    <!--Demo script-->
+    <script src="~/fontawesome/js/fontawesome.js"></script>
+    <script src="~/js/jquey.portal.js"></script>
+    <environment exclude="Development">
+        @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>*@
+        @*<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
+        </script>*@
+    </environment>
+    @RenderSection("Scripts", required: false)
+    <script>
+        $(document).ready(function () {
+            var dt = new Date();
+            var diaSemana = dt.getDay();
+            var dia = dt.getDate();
+            var mes = dt.getMonth();
+            var ano = dt.getFullYear();
+            var semana = new Array("Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado");
+            $("#dtCompleta").text('Hoje é ' + semana[diaSemana] + ' dia ' + dia + '/' + mes + '/' + ano);
+        });
+    </script>
+</body>
+</html>

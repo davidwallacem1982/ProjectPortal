@@ -1,0 +1,61 @@
+﻿.areaSinistro {
+    /*background-color: #25476a;*/
+    background-image: linear-gradient(to bottom right, #25476a, #0094ff);
+    border-radius: 15px;
+}
+
+.cabecalhoInicial {
+    margin-left: 5px;
+    margin-top: 10px;
+}
+
+.statusSinistro {
+    color: #fff;
+}
+
+.tituloSinistro {
+    width: 100%;
+    margin-left: 10px;
+    margin-right: 0px;
+}
+
+    .tituloSinistro span {
+        padding: inherit;
+        color: #fff;
+    }
+
+.itemLabel {
+    color: #fff;
+}
+
+@media (max-width:760px) {
+    .itemProtocolo {
+        text-align: right;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
+    .itemEvento {
+        text-align: left;
+    }
+
+    .itemPlaca {
+        text-align: center;
+    }
+
+    .itemRamoNatureza {
+        text-align: left;
+    }
+
+    .itemValor {
+        text-align: right;
+    }
+
+    .itemData {
+        text-align: center;
+    }
+
+    .itemUf {
+        text-align: center;
+    }
+}

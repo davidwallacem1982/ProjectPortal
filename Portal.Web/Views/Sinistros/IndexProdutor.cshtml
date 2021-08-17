@@ -1,0 +1,898 @@
+﻿@model Portal.Core.Models.SinistrosProdutorViewModel
+
+@{
+    ViewData["Title"] = "Sinistros do Comercial";
+}
+<link href="~/lib/datatable/css/datatables.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" rel="stylesheet" />
+<div class="alert alert-success" id="alertfirstacesso" role="alert" style="display:none; margin-top:-2%; font-size:14pt;">
+    <strong>Este é o seu primeiro acesso ao Portal Trade. Seja bem vindo!</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="row text-right" style="float: none; margin-left: auto;margin-right: auto;">
+    <div class="col-sm-6" id="minhaDiv">
+        <button class="btn colorbuttonGrafico" style="" type="button" onclick="OcultarDivPizza('minhaDiv2')">
+            <i id="iconeP" class="fas fa-expand"></i>
+        </button>
+        <h3 style="text-align:center">Ramos do Segurado</h3>
+        <div id="chart_div" style="width: 100%; height: 400px;"></div>
+    </div>
+    <div class="col-sm-6" id="minhaDiv2">
+        <button class="btn colorbuttonGrafico" type="button" onclick="OcultarDivColuna('minhaDiv')">
+            <i id="iconeC" class="fas fa-expand"></i>
+        </button>
+        <h3 style="text-align:center" id="txtRamos">Eventos por Ramos</h3>
+        <div id="columnChartDiv" style="width: 100%; height: 400px;"></div>
+    </div>
+</div>
+
+<h3 style="margin-top: 0px;margin-bottom: 10px;">Relatório dos Sinistros</h3>
+<table id="tbSinistro" class="display nowrap dataTable dtr-inline collapsed cell-border display compact hover" style="width:100%">
+    <thead style="background-color:#337ab7; color:white">
+        <tr>
+            <th data-priority="1"></th>
+            <th data-priority="1" style="text-align:center;">
+                @Html.DisplayNameFor(model => model.Protocolo)
+            </th>
+            <th data-priority="2" style="text-align:center;">
+                @Html.DisplayNameFor(model => model.Segurado)
+            </th>
+            <th data-priority="4" style="text-align:center;">
+                @Html.DisplayNameFor(model => model.DataSinistro)
+            </th>
+            <th data-priority="3" style="text-align:center;">
+                @Html.DisplayNameFor(model => model.Ramo)
+            </th>
+            <th data-priority="1" style="text-align:center;">
+                @Html.DisplayNameFor(model => model.Pendente)
+            </th>
+            <th data-priority="6" style="text-align:center;">
+                @Html.DisplayNameFor(model => model.UltimoStatus)
+            </th>
+            <th data-priority="5" style="text-align:center;">
+                @Html.DisplayNameFor(model => model.Apelido)
+            </th>
+            <th data-priority="2" style="text-align:center;">
+                @Html.DisplayNameFor(model => model.Valor)
+            </th>
+            <th data-priority="1"></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.20/r-2.2.3/datatables.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/plug-ins/1.10.10/sorting/datetime-moment.js"></script>
+<script type="text/javascript">
+    /*javascript do Jquery Datatable Plugin*/
+    var tableSinistros;
+    $(document).ready(function () {
+        console.log("Teste");
+         var primacesso = '@TempData["Acesso"]';
+         if (primacesso == 'False') {
+             $("#alertfirstacesso").show();
+         }
+         $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
+         $.fn.dataTable.moment("DD/MM/YYYY");
+         tableSinistros = $('#tbSinistro').DataTable({
+            "ajax": {
+                "data": {
+                },
+                "type": "POST",
+                "url": "ListarSinistrosProdutor"
+            },
+            "columns":
+                [
+                {
+                    render: function (data, type, full, meta) {
+                        if (full.semaforo == 1) {
+                            return '<i class="fas fa-check-circle fa-2x" style="color:#218838;" title="Último Status: '+full.ultimoStatus+'"></i>'
+                        }
+                        else if(full.semaforo == 2) {
+                            return '<i class="fas fa-exclamation-circle fa-2x" style="color:#ffcb00;" title="Último Status: '+full.ultimoStatus+'"></i>'
+                        }
+                        else if(full.semaforo == 3) {
+                            return '<i class="fa fa-minus-circle fa-2x" style="color:red;" title="Último Status: '+full.ultimoStatus+'"></i>'
+                        }
+                    },
+                },
+                {
+                    data: "protocolo",
+                    className: 'dt-body-center'
+                },
+                {
+                    data: "segurado"
+                },
+                {
+                     render: function (data, type, full, meta){
+                        return moment(full.dataSinistro).format("DD/MM/YYYY");
+                     },
+                     className: 'dt-body-center'
+                },
+                {
+                    data: "ramo"
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        if (full.pendente) {
+                            return '<button type="button" title="Documentos: PENDENTES" class="btn" style="width:100%; cursor:pointer; background-color:red; color: white" onclick="Documentos(' + full.id + ', ' + full.protocolo + ')"><i class="fas fa-thumbs-down fa-w-16 fa-2x"></i></button>'
+                        }
+                        else {
+                            return '<button type="button" title="Documentos: OK" class="btn" style="width:100%; cursor:pointer; background-color:#218838; color: white"><i class="fa fa-thumbs-up fa-w-16 fa-2x"></i></button>'
+                        }
+                    }
+                },
+                {
+                    data: "ultimoStatus"
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<span title="Seguradora: '+full.seguradora+'" style="cursor:default">'+full.apelido+'</span>'
+                    },
+                    className: 'dt-body-center'
+                },
+                {
+                    data: "valor",
+                    render: $.fn.dataTable.render.number( '.', ',', 2 ),
+                    className: 'dt-body-center'
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<a href="@Url.Action("VisualizarSinistro", "Sinistros")/?id='+full.id+'&Pendente='+full.pendente+'"><i class="fa fa-eye fa-fw" style="cursor:pointer; width: 70px;" title="Visualizar"></i></a>'
+                    },
+                    className: 'dt-body-center'
+                }
+            ],
+             "language": portugues,
+            "responsive": responsivo,
+             "responsive": true,
+             "pageLength": 50,
+             "order": [3, 'desc'],
+             "sAjaxDataProp": "",
+             "autoWidth": true,
+             "deferRender": true,
+         });
+    });
+
+    // Carregando a API Visualization e os pacotes de gráficos
+    google.charts.load('current', { 'packages': ['corechart'], 'language': 'pt-br' });
+    // Configurando o método que será executado quando a API for carregada
+    google.charts.setOnLoadCallback(drawProdutorChart);
+
+    var button = document.getElementById('change-chart');
+    var chartDiv = document.getElementById('chart_div');
+    var columnChartDiv = document.getElementById('columnChartDiv');
+
+    // function do graficos do Produtor
+    function drawProdutorChart() {
+        //Grafico Pie Com informações do Sinistros
+        function drawPieChart() {
+            $.ajax({
+            url: "GraficoPizzaProdutor",
+            type: 'POST',
+            dataType: "JSON",
+            success: function (jsonData) {
+                var dataArray = [
+                    ['Ramo', 'ValorTotalPrejuizo'],
+                ];
+
+                for (var i = 0; i < jsonData.length; i++) {
+                    var row = [jsonData[i].ramo, parseFloat(jsonData[i].valorTotalPrejuizo)];
+                    dataArray.push(row);
+                }
+
+                var dataPie = new google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                    title: 'Valor do Prejuízo',
+                    titleTextStyle: {
+                      fontSize: 20,
+                          color: '#25476a',
+                          bold: true,
+                          italic: false
+                    },
+                    is3D: true,
+                    pieSliceText: 'value',
+                    legend: {
+                        position: 'bottom',
+                        textStyle: {
+                            fontSize: 12,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                        }
+                    }
+                };
+
+                //Para fomatando a variavel formatter para fazer a conversão.
+                var formatter = new google.visualization.NumberFormat({
+                    decimalSymbol: ',',
+                    groupingSymbol: '.',
+                    negativeColor: 'red',
+                    negativeParens: true,
+                    prefix: 'R$ '
+                });
+
+                //Para converter o valores da pizza para real.
+                formatter.format(dataPie, 1);
+
+                var piechart = new google.visualization.PieChart(document.getElementById('chart_div'));
+                piechart.draw(dataPie, options);
+                google.visualization.events.addListener(piechart, 'select', selectHandler);
+
+                function selectHandler() {
+                   var selection = piechart.getSelection();
+                   var ramo = '';
+                    console.log(selection.length);
+                      for (var i = 0; i < selection.length; i++) {
+                        var item = selection[i];
+                        //if (item.row != null) {
+                            
+                        //  }
+                          var ramo = dataPie.getFormattedValue(item.row, 0);
+                          drawColunaRamoChart(ramo);
+                            //tableSinistros
+                            //.column( 4 )
+                            //.data()
+                            //.filter(function (value, index) {
+
+                            //    tableSinistros.search(ramo);
+                            //    return tableSinistros.draw();
+                            //    return value = ramo ? true : false;
+                            //} );
+                            //tableSinistros.search(ramo);
+                            //tableSinistros.draw();
+                          //tableSinistros.search(ramo).draw();
+                          tableSinistros.column(4).search(ramo, true, false).draw();
+                      }
+                      if (ramo == '') {
+                        ramo = 'nothing';
+                      }
+                   }
+                }
+            });
+        };
+        //Grafico Coluna Com informações do Sinistros
+        function drawColunaChart() {
+            document.getElementById("txtRamos").innerHTML = "Todos os Eventos";
+            $.ajax({
+            url: "GraficoColunaLinhaProdutor",
+            type: 'POST',
+            dataType: "JSON",
+                success: function (jsonData) {
+                    //var Ano = jsonData.map(function (item) { return item.ano; });
+                    //var Ramo = jsonData.map(function (item) { return item.ramo; });
+                    //var EventosAno = jsonData.map(function (item) { return item.eventosAno; });
+                    //var TotalEventos = jsonData.map(function (item) { return item.totalEventos; });
+                    //var ValorPrejuizoAno = jsonData.map(function (item) { return item.valorPrejuizoAno; });
+                    //var Ano = jsonData.map(function (item) { return item.ano; });
+                    //var Ramo = jsonData.map(function (item) { return item.ramo; });
+                    //var EventosAno = jsonData.map(function (item) { return item.eventosAno; });
+                    //var TotalEventos = jsonData.map(function (item) { return item.totalEventos; });
+                    //var ValorPrejuizoAno = jsonData.map(function (item) { return item.valorPrejuizoAno; });
+                    //var anoArray = [ ...new Set( Ano ) ];
+
+                    //var ramoArray = [ ...new Set( Ramo ) ];
+                    //function logArrayElements(element, index, array) {
+                    //    for (var i = 0; i < ramoArray.length; i++) {
+                    //        var dataArray = [
+                    //            ['Ramos', ramoArray[i], 'Total de Eventos: ' + anoArray[i] + '']
+                    //        ];
+                    //    }
+                    //    console.log(dataArray);
+
+                    //}
+                    //ramoArray.forEach(logArrayElements);
+                     var dataArray =[
+                            ['Ano', 'Valor do Prejuízo por Ano', {role: 'tooltip', type: 'string'} , 'Total de Eventos: ' + jsonData[0].totalEventos + '', {role: 'tooltip', type: 'string'} ]
+                     ];
+
+                    for (var i = 0; i < jsonData.length; i++) {
+                        var row = [jsonData[i].ano, parseFloat(jsonData[i].valorPrejuizoAno), 'Prejuízo em '+jsonData[i].ano+'\nValor: '+formatReal(jsonData[i].valorPrejuizoAno), parseInt(jsonData[i].eventosAno), 'Eventos\nTotal em '+jsonData[i].ano+': '+jsonData[i].eventosAno];
+                        dataArray.push(row);
+                    }
+
+                var dataColunas = new google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                   annotations: {
+                       textStyle: {
+                       color: 'black',
+                       fontSize: 11
+                       },
+                   },
+                   series: {
+                      0: {targetAxisIndex: 0},
+                      1: {targetAxisIndex: 1, type: 'line', pointSize: 10, pointShape: { type: 'diamond' }},
+                   },
+                   title: 'Anos dos Eventos',
+                   titleTextStyle: {
+                      fontSize: 20,
+                          color: '#25476a',
+                          bold: true,
+                          italic: false
+                    },
+                   hAxis: {
+                      title: 'Anos',
+                      textStyle: {
+                        fontSize: 13,
+                        color: '#25476a',
+                        bold: true,
+                        italic: false
+                      },
+                      titleTextStyle: {
+                        fontSize: 20,
+                        color: '#25476a',
+                        bold: true,
+                        italic: false
+                      }
+                   },
+                   vAxes: {
+                      // Adds titles to each axis.
+                      0: {title: 'Valor do Prejuízo',
+                          format: 'currency',
+                          textStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          }      
+                   }, 
+                      1: {title: 'Eventos',
+                          textStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          side: 'right',       
+                      }
+                   }
+                };
+
+                //Para fomatando a variavel formatter para fazer a conversão.
+                var formatter = new google.visualization.NumberFormat({
+                    decimalSymbol: ',',
+                    groupingSymbol: '.',
+                    negativeColor: 'red',
+                    negativeParens: true,
+                    prefix: 'R$ '
+                });
+
+                    //Para converter o valores da pizza para real.
+                    formatter.format(dataColunas, 1);
+
+                    var AllChart = new google.visualization.ColumnChart(columnChartDiv);
+                    AllChart.draw(dataColunas, options);
+
+                   google.visualization.events.addListener(AllChart, 'select', selectHandler);
+
+                    function selectHandler() {
+                        var selection = AllChart.getSelection();
+                        var ano = '';
+
+                          for (var i = 0; i < selection.length; i++) {
+                            var item = selection[i];
+                              if (item.row != null) {
+                                  ano = dataColunas.getFormattedValue(item.row, 0);
+                                  drawColunaAnoChart(ano);
+                                  tableSinistros.column(3).search(ano, true, false).draw();
+                              }
+                          }
+                          if (ano == '') {
+                              ano = 'nothing';
+                          }
+                    }
+                }
+            });
+        };
+        //Grafico Coluna Com informações do Sinistros por ano
+        function drawColunaAnoChart(ano) {
+            document.getElementById("txtRamos").innerHTML = "Eventos no Ano";
+            $.ajax({
+            url: "GraficoColunaLinhaProdutorAno",
+            data: { ano: ano },
+            type: 'POST',
+            dataType: "JSON",
+                success: function (jsonData) {
+                     var dataArray =[
+                            ['Ano', 'Valor do Prejuízo por Ano', {role: 'tooltip', type: 'string'} , { type: 'string', role: 'annotation' }, 'Total de Eventos: ' + jsonData[0].totalEventos + '', {role: 'tooltip', type: 'string'} ]
+                     ];
+
+                    for (var i = 0; i < jsonData.length; i++) {
+                        var row = [jsonData[i].ano, parseFloat(jsonData[i].valorPrejuizoAno), 'Prejuízo de '+jsonData[i].ramo+'\nValor: '+formatReal(jsonData[i].valorPrejuizoAno), jsonData[i].ramo, parseInt(jsonData[i].eventos), 'Ramo: '+jsonData[i].ramo+'\nEventos: '+jsonData[i].eventos];
+                        dataArray.push(row);
+                    }
+
+                var dataColunas = new google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                   annotations: {
+                        textStyle: {
+                       color: 'black',
+                       fontSize: 11
+                       },
+                   },
+                   series: {
+                      0: {targetAxisIndex: 0},
+                      1: {targetAxisIndex: 1, type: 'line', pointSize: 10, pointShape: { type: 'diamond' }},
+                   },
+                   title: 'Ano de ' + ano,
+                   titleTextStyle: {
+                      fontSize: 20,
+                          color: '#25476a',
+                          bold: true,
+                          italic: false
+                    },
+                   hAxis: {
+                      title: 'Ano',
+                      textStyle: {
+                        fontSize: 13,
+                        color: '#25476a',
+                        bold: true,
+                        italic: false
+                      },
+                      titleTextStyle: {
+                        fontSize: 20,
+                        color: '#25476a',
+                        bold: true,
+                        italic: false
+                      }
+                   },
+                   vAxes: {
+                      // Adds titles to each axis.
+                      0: {title: 'Valor do Prejuízo',
+                          format: 'currency',
+                          textStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          }      
+                   }, 
+                      1: {title: 'Eventos',
+                          textStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          side: 'right',       
+                      }
+                   }
+                };
+
+                //Para fomatando a variavel formatter para fazer a conversão.
+                var formatter = new google.visualization.NumberFormat({
+                    decimalSymbol: ',',
+                    groupingSymbol: '.',
+                    negativeColor: 'red',
+                    negativeParens: true,
+                    prefix: 'R$ '
+                });
+
+                //Para converter o valores da pizza para real.
+                formatter.format(dataColunas, 1);
+
+                var RamoChart = new google.visualization.ColumnChart(columnChartDiv);
+                RamoChart.draw(dataColunas, options);
+                google.visualization.events.addListener(RamoChart, 'select', selectHandler);
+
+                function selectHandler() {
+                    var selection = RamoChart.getSelection();
+                    var novoAno = ano;
+
+                      for (var i = 0; i < selection.length; i++) {
+                          var item = selection[i];
+                          if (item.row != null) {
+                              ramo = dataColunas.getFormattedValue(item.row, 3);
+                              drawColunaRamoAnoChart(ramo, novoAno);
+                              tableSinistros.column(4).search(ramo, true, false).draw();
+                              tableSinistros.column(3).search(ano, true, false).draw();
+                          }
+                      }
+                      if (ramo == '' || ano == '') {
+                          ramo = 'nothing';
+                          ano = 'nothing';
+                      }
+                   }
+                }
+            });
+        };
+        //Grafico Coluna Com informações do Sinistros por Ramo
+        function drawColunaRamoChart(ramo) {
+            document.getElementById("txtRamos").innerHTML = "Eventos de "+ramo;
+            $.ajax({
+            url: "GraficoColunaLinhaProdutorRamo",
+            data: { ramo: ramo },
+            type: 'POST',
+            dataType: "JSON",
+                success: function (jsonData) {
+                     var dataArray =[
+                            ['Ano', 'Valor do Prejuízo por Ano', {role: 'tooltip', type: 'string'} , 'Total de Eventos: ' + jsonData[0].totalEventos + '', {role: 'tooltip', type: 'string'}]
+                     ];
+
+                    for (var i = 0; i < jsonData.length; i++) {
+                        var row = [jsonData[i].ano, parseFloat(jsonData[i].valorPrejuizoAno), 'Prejuízo em '+jsonData[i].ano+'\nValor : '+formatReal(jsonData[i].valorPrejuizoAno), parseInt(jsonData[i].eventosAno), 'Eventos em '+jsonData[i].ano+'\nTotal: '+jsonData[i].eventosAno];
+                        dataArray.push(row);
+                    }
+
+                var dataColunas = new google.visualization.arrayToDataTable(dataArray);
+
+                var options = {
+                   annotations: {
+                       textStyle: {
+                       color: 'black',
+                       fontSize: 11
+                       },
+                   },
+                   series: {
+                      0: {targetAxisIndex: 0},
+                      1: {targetAxisIndex: 1, type: 'line', pointSize: 10, pointShape: { type: 'diamond' }},
+                   },
+                   title: 'Anos dos Eventos',
+                   titleTextStyle: {
+                      fontSize: 20,
+                          color: '#25476a',
+                          bold: true,
+                          italic: false
+                    },
+                   hAxis: {
+                      title: 'Anos',
+                      textStyle: {
+                        fontSize: 13,
+                        color: '#25476a',
+                        bold: true,
+                        italic: false
+                      },
+                      titleTextStyle: {
+                        fontSize: 20,
+                        color: '#25476a',
+                        bold: true,
+                        italic: false
+                      }
+                   },
+                   vAxes: {
+                      // Adds titles to each axis.
+                      0: {title: 'Valor do Prejuízo',
+                          format: 'currency',
+                          textStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          }      
+                   }, 
+                      1: {title: 'Eventos',
+                          textStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            fontSize: 13,
+                            color: '#25476a',
+                            bold: true,
+                            italic: false
+                          },
+                          side: 'right',       
+                      }
+                   }
+                };
+
+                //Para fomatando a variavel formatter para fazer a conversão.
+                var formatter = new google.visualization.NumberFormat({
+                    decimalSymbol: ',',
+                    groupingSymbol: '.',
+                    negativeColor: 'red',
+                    negativeParens: true,
+                    prefix: 'R$ '
+                });
+
+                //Para converter o valores da pizza para real.
+                formatter.format(dataColunas, 1);
+
+                var AnoChart = new google.visualization.ColumnChart(columnChartDiv);
+                AnoChart.draw(dataColunas, options);
+                google.visualization.events.addListener(AnoChart, 'select', selectHandler);
+
+                function selectHandler() {
+                    var selection = AnoChart.getSelection();
+                    var novoRamo = ramo;
+                    var ano = '';
+
+                      for (var i = 0; i < selection.length; i++) {
+                        var item = selection[i];
+                          if (item.row != null) {
+                              ano = dataColunas.getFormattedValue(item.row, 0);
+                              drawColunaRamoAnoChart(novoRamo, ano);
+                              tableSinistros.column(4).search(ramo, true, false).draw();
+                              tableSinistros.column(3).search(ano, true, false).draw();
+                          }
+                      }
+                      if (ano == '') {
+                          ano = 'nothing';
+                      }
+                   }
+                }
+            });
+        };
+        //Grafico Coluna Com informações do Sinistros por Ramo e Ano
+        function drawColunaRamoAnoChart(ramo, ano) {
+            document.getElementById("txtRamos").innerHTML = ramo+ " por Mês";
+            $.ajax({
+                url: "GraficoColunaLinhaProdutorRamoAno",
+                type: 'POST',
+                data: { ramo: ramo, ano: ano },
+                dataType: "JSON",
+                success: function (jsonData) {
+                    var dataArray = [
+                        ['Mes', 'Valor do Prejuízo no Mês', {role: 'tooltip', type: 'string'}, 'Total de Eventos: '+jsonData[0].eventosAno, {role: 'tooltip', type: 'string'}],
+                    ];
+
+                    for (var i = 0; i < jsonData.length; i++) {
+                        eventosdoAno = jsonData[i].eventosAno;
+                        var mes = MesdoAno(jsonData[i].mesAno);
+                        var row = [jsonData[i].mesAno, parseFloat(jsonData[i].valorPrejuizoMes), 'Prejuízo em '+mes+'\nValor : '+formatReal(jsonData[i].valorPrejuizoMes), parseInt(jsonData[i].eventosMes), 'Eventos: '+jsonData[i].eventosMes];
+                        dataArray.push(row);
+                    }
+
+                    var dataColunaRamoAno = google.visualization.arrayToDataTable(dataArray);
+
+                    var options = {
+                        annotations: {
+                            textStyle: {
+                            color: 'black',
+                            fontSize: 11
+                            },
+                        },
+                        series: {
+                           0: {targetAxisIndex: 0},
+                           1: {targetAxisIndex: 1, type: 'line', pointSize: 10, pointShape: { type: 'diamond' }},
+                        },
+                        title: 'Eventos no Ano de '+ano,
+                        titleTextStyle: {
+                          fontSize: 20,
+                              color: '#25476a',
+                              bold: true,
+                              italic: false
+                        },
+                        hAxis: {
+                           title: ano,
+                           textStyle: {
+                             fontSize: 15,
+                             color: '#25476a',
+                             bold: true,
+                             italic: false
+                           },
+                           titleTextStyle: {
+                             fontSize: 20,
+                             color: '#25476a',
+                             bold: true,
+                             italic: false
+                           }
+                        },
+                        vAxes: {
+                           // Adds titles to each axis.
+                           0: {title: 'Valor do Prejuízo',
+                               format: 'currency',
+                               textStyle: {
+                                 fontSize: 15,
+                                 color: '#25476a',
+                                 bold: true,
+                                 italic: false
+                               },
+                               titleTextStyle: {
+                                 fontSize: 15,
+                                 color: '#25476a',
+                                 bold: true,
+                                 italic: false
+                               }      
+                        }, 
+                           1: {title: 'Eventos',
+                               textStyle: {
+                                 fontSize: 15,
+                                 color: '#25476a',
+                                 bold: true,
+                                 italic: false
+                               },
+                               titleTextStyle: {
+                                 fontSize: 15,
+                                 color: '#25476a',
+                                 bold: true,
+                                 italic: false
+                               },
+                               side: 'right'
+                           }
+                        }
+                    };
+
+                    //Para fomatando a variavel formatter para fazer a conversão.
+                    var formatter = new google.visualization.NumberFormat({
+                        decimalSymbol: ',',
+                        groupingSymbol: '.',
+                        negativeColor: 'red',
+                        negativeParens: true,
+                        prefix: 'R$ '
+                    });
+
+                    //Para converter o valores da pizza para real.
+                    formatter.format(dataColunaRamoAno, 1);
+
+                    var mesChart = new google.visualization.ColumnChart(columnChartDiv);
+
+                    mesChart.draw(dataColunaRamoAno, options);
+                    google.visualization.events.addListener(mesChart, 'select', selectHandler);
+
+                    function selectHandler() {
+                        var selection = mesChart.getSelection();
+                        var novoAno = ano;
+
+                        for (var i = 0; i < selection.length; i++) {
+                          var item = selection[i];
+                            if (item.row != null) {
+                                dia = dataColunaRamoAno.getFormattedValue(item.row, 0);
+                                var data = dia +'/'+ novoAno;
+                                drawColunaChart();
+                                tableSinistros.column(3).search(data, true, false).draw();
+                            }
+                        }
+                        if (ano == '') {
+                            ano = 'nothing';
+                        }
+                    }
+                }
+            });
+        };
+        //Graficos que carregam na Tela de Relatório
+        drawPieChart();
+        drawColunaChart();
+    };
+
+    //Para converter o valor do tooltip para real.
+    function formatReal( valor )
+    {
+      var valorFormatado = valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      return valorFormatado;
+    };
+
+    //recarregar o grafico para redimensionar o mesmo.
+    document.getElementsByTagName("BODY")[0].onresize = function () { drawProdutorChart() };
+
+    function Documentos(Id, Protocolo) {
+        window.document.location = '@Url.Action("Index","Documentos")'+'?sinistrosid='+ Id +'&protocolo='+Protocolo;
+    }
+
+    function OcultarDivPizza(el) {
+        var displayp = document.getElementById(el).style.display;
+        if (displayp == "none") {
+            drawProdutorChart();
+            document.getElementById(el).style.display = 'block';
+            document.getElementById('minhaDiv').className = "col-sm-6";
+            document.getElementById('iconeP').className = "fas fa-expand";
+        }
+        else
+        {
+            drawProdutorChart();
+            document.getElementById(el).style.display = 'none';
+            document.getElementById('minhaDiv').className = "col-sm-12";
+            document.getElementById('iconeP').className = "fas fa-compress-arrows-alt";
+        }
+    }
+
+    function OcultarDivColuna(el) {
+        var displayp = document.getElementById(el).style.display;
+        if (displayp == "none") {
+            drawProdutorChart();
+            document.getElementById(el).style.display = 'block';
+            document.getElementById('minhaDiv2').className = "col-sm-6";
+            document.getElementById('iconeC').className = "fas fa-expand";
+        }
+        else
+        {
+            drawProdutorChart();
+            document.getElementById(el).style.display = 'none';
+            document.getElementById('minhaDiv2').className = "col-sm-12";
+            document.getElementById('iconeC').className = "fas fa-compress-arrows-alt";
+        }
+    }
+
+    function MesdoAno(mes)
+    {
+        switch (mes) {
+              case '01':
+                day = "Janeiro";
+                break;
+              case '02':
+                day = "Fevereiro";
+                break;
+              case '03':
+                day = "Março";
+                break;
+              case '04':
+                day = "Abril";
+                break;
+              case '05':
+                day = "Maio";
+                break;
+              case '06':
+                day = "Junho";
+                break;
+              case '07':
+                day = "Julho";
+                break;
+              case '08':
+                day = "Agosto";
+                break;
+              case '09':
+                day = "Setembro";
+                break;
+              case '10':
+                day = "Outubro";
+                break;
+              case '11':
+                day = "Novembro";
+                break;
+              case '12':
+                day = "Dezembro";
+        }
+        return day;
+    };
+        
+    //$(chartDiv).click(function(){
+    //    tableSinistros.column(4).search('', true, false).draw();
+    //    tableSinistros.column(3).search('', true, false).draw();
+    //    drawProdutorChart().drawColunaChart();
+    //});
+
+    //$(columnChartDiv).click(function () {
+    //   tableSinistros.column(4).search('', true, false).draw();
+    //   tableSinistros.column(3).search('', true, false).draw();
+    //   drawProdutorChart();
+    //});
+
+    //pegar a tecla
+    document.addEventListener("keydown", function(event) {
+       //console.log(event.which);
+       tableSinistros.column(4).search('', true, false).draw();
+       tableSinistros.column(3).search('', true, false).draw();
+       drawProdutorChart();
+    })
+</script>

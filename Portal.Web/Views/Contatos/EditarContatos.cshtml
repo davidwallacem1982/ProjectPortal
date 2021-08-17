@@ -1,0 +1,164 @@
+﻿@model Portal.Core.Entities.ListaContatosPortal
+
+@{
+    ViewData["Title"] = "Editar Contato";
+}
+<link href="~/css/styleButtons.css" rel="stylesheet" />
+<link href="~/flexbox/css/VisualizarSinistro.css" rel="stylesheet" />
+
+@Html.HiddenFor(a => a.Id)
+<h3 style="margin-left:1%; margin-top:-0.5%;">Editar Contato</h3>
+<div style="height:20%;">
+</div>
+<div class="alert alert-success" id="msn-sucess" style="display:none; height:100%; margin-top:15px; font-size:10pt">
+    <h4>
+        <strong>Sucesso! &ensp;</strong>
+        <span id="sucessmsg"></span>
+    </h4>
+</div>
+<div class="alert alert-danger" id="err-alert" style="display:none; height:100%; margin-top:15px; font-size:10pt">
+    <h4>
+        <strong>Erro! &ensp;</strong>
+        <ul id="errmsg">
+        </ul>
+    </h4>
+</div>
+<div class="panel">
+
+    <form asp-action="CadastroContatos">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="panel-body justify-content-center" id="painelVisSinistro" style="background-image: linear-gradient(to bottom right, #25476a, #0094ff); border: 1px solid #ddd; border-radius: 10px;">
+            <div class="row justify-content-start" style="width:100%;margin-left: 0px;margin-right: 0px; margin-top: 15px;">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label asp-for="Nome" class="control-label" style=" color:#fff;"></label>
+                        <input asp-for="Nome" class="form-control" />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" style=" color:#fff;">Grupo - <strong><a href="#" id="alertaesqueceu" style=" color:#fff;" !important;">Clique aqui para adicionar novo Grupo</a></strong></label>
+                        @Html.DropDownListFor(g => g.ContatosPortalId, new SelectList(ViewBag.Grupo, "Id", "Titulo"), "Selecione o grupo do contato...", new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label" style=" color:#fff;">Cargo - <strong><a href="#" id="alertaesqueceu" style=" color:#fff;" !important;">Clique aqui para adicionar novo Cargo</a></strong></label>
+                        @Html.DropDownListFor(c => c.CargoId, new SelectList(ViewBag.Cargo, "Id", "Nome"), "Selecione o cargo...", new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-start" style="width:100%;margin-left: 0px;margin-right: 0px;">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="Telefone" class="control-label" style=" color:#fff;"></label>
+                        <input asp-for="Telefone" class="form-control" />
+                        <span asp-validation-for="Telefone" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label" style=" color:#fff;"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label asp-for="Site" class="control-label" style=" color:#fff;"></label>
+                        <input asp-for="Site" class="form-control" />
+                        <span asp-validation-for="Site" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="col-lg-12">
+    <br />
+    <div class="text-right">
+        <button type="submit" value="Create" class="btn btn-primary colorbuttonPadrao" style="cursor: pointer" id="editarbtn">
+            <i class="fas fa-save"></i>
+            &ensp;Gravar
+        </button>
+        <button type="button" class="btn btn-primary colorbuttonPadrao" onclick="Voltar()">
+            <i class="fa fa-undo-alt fa-fw"></i>&ensp;Voltar
+        </button>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/unpkg/imask.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        @*var teste = util.dropdownGrupo("@Url.Action("JsonListarTitulosContatos", "Contatos")", $("#ContatosPortalId"), "Selecione o grupo do contato...");
+        util.dropdownCargo("@Url.Action("JsonListarCargos", "Contatos")", $("#CargoId"), "Selecione o cargo...");*@
+        var dynamicMask = IMask(
+            document.getElementById('Telefone'),
+            {
+                mask: [
+                    {
+                        mask: '(00)0000-0000'
+                    },
+                    {
+                        mask: '(00)00000-0000'
+                    }
+                ]
+            });
+
+        console.log($("#ContatosPortalId").val());
+
+    });
+
+        $("#editarbtn").click(function(){
+        var url = '@Url.Action("EditarContatos", "Contatos")';
+            $.post({
+                url: url,
+                data: {
+                    Id: $('#Id').val(),
+                    Nome: $('#Nome').val(),
+                    ContatosPortalId: $('#ContatosPortalId').val(),
+                    CargoId: $('#CargoId').val(),
+                    Telefone: $('#Telefone').val(),
+                    Email: $('#Email').val(),
+                    Site: $('#Site').val()
+                },
+                success: function (returnData) {
+                    if (returnData.ok) {
+                        $("#sucessmsg").text(returnData.message);
+                        $("#msn-sucess").fadeTo(5000, 1000).slideUp(500, function ()
+                        {
+                            $("#msn-sucess").slideUp(1000);
+                        });
+                    }
+                    else {
+                        $("#errmsg").text(returnData.message);
+                        $("#err-alert").fadeTo(7000, 1000).slideUp(500, function() {
+                            $("#err-alert").slideUp(1000);
+                        });
+
+                        if (returnData.message != null) {
+                            $("#errmsg").text(returnData.message);
+                            $("#err-alert").fadeTo(7000, 1000).slideUp(500, function () {
+                                $("#err-alert").slideUp(1000);
+                            });
+                        }
+                        else {
+                            $('#errmsg').empty();
+                            $.each(returnData.listMessage, function (key, item) {
+                                $('#errmsg').append('<li>' + item + '</li>');
+                            });
+                            $("#err-alert").fadeTo(8000, 1000).slideUp(500, function () {
+                                $("#err-alert").slideUp(1000);
+                            });
+                        }
+                    }
+                },
+            });
+        });
+    function Voltar() {
+        window.document.location = '@Url.Action("Index", "Contatos")';
+    }
+</script>
+

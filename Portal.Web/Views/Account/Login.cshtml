@@ -1,0 +1,171 @@
+﻿@model LoginViewModel
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+          crossorigin="anonymous"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
+    <link href="~/css/newLogin.css" rel="stylesheet" />
+    <!-- Digite ícones Solid de Fontawesome-->
+    <link href="~/fontawesome/css/solid.css" rel="stylesheet" />
+    <title>Bem Vindo ao Portal</title>
+</head>
+<body style="background-color: #06ABEB !important;">
+    <div class="modal-dialog text-center">
+        <div class="col-sm-8 main-section">
+            <div class="modal-content">
+                <div class="col-12 user-img">
+                    <img src="~/img/profile-photos/1.png" />
+                </div>
+                <img src="~/img/logo-Trade.svg" />
+                <h2 class="title title-primary" style="color:white">Bem Vindo</h2>
+                <br />
+                @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { id = "Cadastro", @class = "col-12" }))
+                {
+                    <div class="form-group" id="Usuario-group">
+                        @Html.EditorFor(a => a.UserName, new { htmlAttributes = new { @style = "height:40px; color: #3D3D54", @class = "form-control", placeholder = "Nome de Usuário" } })
+                    </div>
+                    <div class="form-group" id="Senha-group">
+                        @Html.EditorFor(a => a.Password, new { htmlAttributes = new { @style = "height:40px; color: #3D3D54; text-align: left; font-size: 18px;", @class = "form-control", placeholder = "Senha" } })
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="testbtn"><i class="fas fa-sign-in-alt"></i>  Acessar </button>
+                    <div class="alert alert-danger" id="err-alert" style="display:none; height:100%; margin-top:15px; font-size:10pt">
+                        <strong>Erro! &ensp;</strong>
+                        <span id="errmsg"></span>
+                    </div>
+                    <div class="col-12 forgot">
+                        <a href="#" id="alertaesqueceu">Esqueceu a senha?</a>
+                        <br />
+                        <a href="#" style="cursor:pointer">
+                            <span id="alertareenvio" style="display:none;">Reenviar Email!<br /></span>
+                        </a>
+                        <br />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+        asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+        asp-fallback-test="window.jQuery"
+        crossorigin="anonymous"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+        asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+        asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+        crossorigin="anonymous"
+        integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
+</script>
+<script src="~/fontawesome/js/all.js"></script>
+<script type="text/javascript">
+    var body = document.querySelector("body");
+
+    //$('#UserName').addEventListener("keyup", function(event) {
+    //    // Number 13 is the "Enter" key on the keyboard
+    //    if (event.keyCode === 13) {
+    //        // Cancel the default action, if needed
+    //        event.preventDefault();
+    //        // Trigger the button element with a click
+    //        document.getElementById("testbtn").click();
+    //    }
+    //});
+    //$('#Password').addEventListener("keyup", function (event) {
+    //    // Number 13 is the "Enter" key on the keyboard
+    //    if (event.keyCode === 13) {
+    //        // Cancel the default action, if needed
+    //        event.preventDefault();
+    //        // Trigger the button element with a click
+    //        document.getElementById("testbtn").click();
+    //    }
+    //});
+
+    $("#Cadastro").submit(function (e) {
+        e.preventDefault();
+    });
+
+    $("#testbtn").click(function(){
+        var uservar = $("#UserName").val();
+        var pwdvar = $("#Password").val();
+        var url = '@Url.Action("Login","Account")';
+        $.post({
+            url: url,
+            data: {
+                UserName: uservar,
+                Password: pwdvar
+            },
+            success: function (returnData) {
+                if (returnData.ok == true) {
+                    location.href = returnData.message
+                }
+                else {
+                    $("#errmsg").text(returnData.message);
+                    $("#err-alert").fadeTo(10000, 1000).slideUp(500, function() {
+                        $("#err-alert").slideUp(1000);
+                    });
+                    if (returnData.reenviar) {
+                        $("#alertareenvio").show();
+                    }
+                }
+            },
+        });
+    });
+
+    $("#alertareenvio").click(function(){
+      var user = $("#UserName").val();
+      var url = '@Url.Action("CheckEmailReenvio", "Account")';
+      $.post({
+          url: url,
+          data: {
+              usuario: user
+          },
+          success: function (returnData) {
+              if (returnData.ok == true) {
+                  location.href = returnData.message
+              }
+              else {
+                  $("#errmsg").text(returnData.message);
+                  $("#err-alert").fadeTo(10000, 1000).slideUp(500, function() {
+                      $("#err-alert").slideUp(1000);
+                  });
+              }
+          },
+      });
+    });
+
+    $("#alertaesqueceu").click(function(){
+      var user = $("#UserName").val();
+      var url = '@Url.Action("CheckEmailEsqueceu", "Account")';
+      $.post({
+          url: url,
+          data: {
+              usuario: user
+          },
+          success: function (returnData) {
+              if (returnData.ok == true) {
+                  location.href = returnData.message
+              }
+              else {
+                  $("#errmsg").text(returnData.message);
+                  $("#err-alert").fadeTo(10000, 1000).slideUp(500, function() {
+                      $("#err-alert").slideUp(1000);
+                  });
+              }
+          },
+      });
+    });
+</script>

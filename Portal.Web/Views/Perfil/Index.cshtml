@@ -1,0 +1,124 @@
+﻿@{
+    ViewData["Title"] = "Perfil do Usuário";
+}
+
+<div class="alert alert-danger" id="alertaretorno" role="alert" style="display:none; font-size:14pt;">
+    <strong>@TempData["ReturnLogo"]</strong>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+@using (Html.BeginForm("UploadLogo", "Perfil", FormMethod.Post, new { id = "Upload", @style = "display: none;", @enctype = "multipart/form-data" }))
+{
+    <input type="file" id="file" name="file" style="display:none;" onchange="form.submit()" />
+}
+
+<div class="col-lg-2" id="containeruserimg" style="margin-bottom:5px;">
+    <div class="user-img">
+        <img class="img-circle rounded-lg" id="uploadimg" src="@HttpContextAccessor.HttpContext.Session.GetString("PathLogo")" alt="Profile Picture" style="width:165px; height:200px; cursor:pointer;">
+        <div class="icon-wrapper rounded-lg">
+            <i class="fa fa-upload fa-3x"></i>
+        </div>
+    </div>
+    <br />
+</div>
+
+<div class="col-lg-12" id="containeruserimgalt" style="display:none;">
+    <div class="user-img-alt">
+        <img class="img-circle" id="uploadimgalt" src="@HttpContextAccessor.HttpContext.Session.GetString("PathLogo")" alt="Profile Picture" style="width:180px; height:200px; cursor:pointer;">
+        <h4>Clique para alterar a imagem...</h4>
+    </div>
+</div>
+
+<div class="col-lg-10 border-secondary border rounded-lg" style="height:200px; margin-bottom:5px">
+    <div class="col-md-12" style="margin-bottom:15px;">
+        <h2>Perfil do Usuário</h2>
+    </div>
+    <div class="col-md-12">
+        <span class="font-weight-bold" style="font-size:17px; color:#25476a;">Nome:&ensp;</span><span>@HttpContextAccessor.HttpContext.Session.GetString("Nome")</span>
+    </div>
+    <div class="col-md-12">
+        <span class="font-weight-bold" style="font-size:17px; color:#25476a;">Usuário:&ensp;</span><span>@HttpContextAccessor.HttpContext.Session.GetString("UserName")</span>
+    </div>
+    <div class="col-md-12">
+        <span class="font-weight-bold" style="font-size:17px; color:#25476a;">E-mail:&ensp;</span><span>@HttpContextAccessor.HttpContext.Session.GetString("UserEmail")</span>
+    </div>
+    <div class="col-md-12">
+        <span class="font-weight-bold" style="font-size:17px; color:#25476a;">Segurado Associado:&ensp;</span><span>@HttpContextAccessor.HttpContext.Session.GetString("ClientesNome")</span>
+    </div>
+    <div class="col-md-12"></div>
+</div>
+<div class="col-lg-12">
+    <div class="text-right">
+        <button class="btn btn-primary colorbuttonPadrao" onclick=" location.href = '@Url.Action("AlterarSenha", "Account")'" style="cursor: pointer">
+            <i class="fas fa-pencil-alt"></i>
+            &ensp;Alterar Senha
+        </button>
+        <button type="button" class="btn btn-primary colorbuttonPadrao" onclick="Voltar()">
+            <i class="fa fa-undo-alt fa-fw"></i>&ensp;Voltar
+        </button>
+    </div>
+</div>
+<style>
+    @@media only screen and (max-width: 1330px) {
+        #containeruserimgalt {
+            text-align: center !important;
+            display: block !important;
+        }
+
+        #containeruserimg {
+            display: none;
+        }
+    }
+
+    #containeruserimgalt {
+        display: none;
+    }
+
+    .user-img {
+        position: absolute;
+        /*width:50%;*/
+        /*border-radius:50%;*/
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+        .user-img:hover {
+            opacity: 0.7;
+            z-index: 501;
+        }
+
+        .user-img img:hover + i {
+            display: block;
+            z-index: 500;
+        }
+
+        .user-img .icon-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            text-align: center;
+            width: 100%;
+            padding: 5px;
+        }
+</style>
+<script>
+    var retorno = '@TempData["ReturnLogo"]'
+    $(document).ready(function () {
+        if (retorno != '') {
+            $("#alertaretorno").show();
+        }
+    });
+    $("#uploadimg").click(function () {
+        $("#file").click();
+    });
+    $("#uploadimgalt").click(function () {
+        $("#file").click();
+    });
+    function Voltar() {
+        window.document.location = '@HttpContextAccessor.HttpContext.Session.GetString("DefaultHome")';
+    }
+</script>

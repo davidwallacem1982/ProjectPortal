@@ -1,0 +1,121 @@
+﻿@model ForgotPasswordViewModel
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+          crossorigin="anonymous"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" />
+    <link href="~/css/newLogin.css" rel="stylesheet" />
+    <!-- Digite ícones Solid de Fontawesome-->
+    <link href="~/fontawesome/css/solid.css" rel="stylesheet" />
+    <title>Confirmação de E-mail</title>
+</head>
+<body style="background-color: #06ABEB !important;">
+    <div class="modal-dialog text-center">
+        <div class="col-sm-8 main-section">
+            <div class="modal-content">
+                <br />
+                <div class="col-12">
+                    <img src="~/img/logo-Trade.svg" />
+                    <br />
+                    <br />
+                    <i class="fas fa-envelope-square fa-3x" style="color:#ffffff;"></i>
+                </div>
+                <h2 class="title title-primary" style="color:white">Confirme o E-mail</h2>
+                @using (Html.BeginForm("ReenviarEmail", "Account", FormMethod.Post, new { id = "Cadastro", @class = "col-12" }))
+                {
+                    <div class="form-email" id="Email-group">
+                        @Html.EditorFor(a => a.Email, new { htmlAttributes = new { @style = "height:40px; color: #3D3D54;", @class = "form-control", placeholder = "E-mail" } })
+                    </div>
+                    <br />
+                    <button type="submit" class="btn btn-primary" id="renviobtn" style="width: 126px;"><i class="fas fa-sign-in-alt"></i>  Enviar </button>
+                    <button type="button" class="btn btn-primary" id="renviobtn" style="width: 126px;" onclick="Voltar()"><i class="fa fa-undo-alt fa-fw"></i>  Voltar </button>
+                    <div class="alert alert-danger" id="err-alert" style="display:none; height:100%; margin-top:15px; font-size:10pt">
+                        <strong>Erro! &ensp;</strong>
+                        <span id="errmsg"></span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+        asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+        asp-fallback-test="window.jQuery"
+        crossorigin="anonymous"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+        asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+        asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+        crossorigin="anonymous"
+        integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
+</script>
+<script src="~/fontawesome/js/all.js"></script>
+<script type="text/javascript">
+    var body = document.querySelector("body");
+    $(document).ready(function () {
+        document.getElementById("Email").readOnly = true;
+    });
+    //$('#UserName').addEventListener("keyup", function(event) {
+    //    // Number 13 is the "Enter" key on the keyboard
+    //    if (event.keyCode === 13) {
+    //        // Cancel the default action, if needed
+    //        event.preventDefault();
+    //        // Trigger the button element with a click
+    //        document.getElementById("testbtn").click();
+    //    }
+    //});
+    //$('#Password').addEventListener("keyup", function (event) {
+    //    // Number 13 is the "Enter" key on the keyboard
+    //    if (event.keyCode === 13) {
+    //        // Cancel the default action, if needed
+    //        event.preventDefault();
+    //        // Trigger the button element with a click
+    //        document.getElementById("testbtn").click();
+    //    }
+    //});
+
+    $("#Cadastro").submit(function (e) {
+        e.preventDefault();
+    });
+
+    function Voltar() {
+        window.document.location = '/Account/Login';
+    }
+
+    $("#renviobtn").click(function(){
+        var email = $("#Email").val();
+        var url = '@Url.Action("ReenviarEmail","Account")';
+        $.post({
+            url: url,
+            data: {
+                Email: email
+            },
+            success: function (returnData) {
+                if (returnData.ok == true) {
+                    location.href = returnData.message
+                }
+                else {
+                    $("#errmsg").text(returnData.message);
+                    $("#err-alert").fadeTo(7000, 1000).slideUp(500, function() {
+                        $("#err-alert").slideUp(1000);
+                    });
+                }
+            },
+        });
+    });
+</script>

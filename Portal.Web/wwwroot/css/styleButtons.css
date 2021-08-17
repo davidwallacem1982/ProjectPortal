@@ -1,0 +1,53 @@
+﻿#divVoltarButton {
+    margin: 0px;
+}
+
+.animacaoButton {
+    flex-direction: column;
+    margin: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 2px solid #25476a;
+    text-decoration: none;
+    color: #25476a;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: .3s;
+}
+
+    .animacaoButton:hover {
+        color: #FFF;
+        background: #25476a;
+        font-weight: bold;
+        font-size: 18px;
+        box-shadow: 0 3px 25px #bbb;
+        border: #25476a;
+        border-bottom: 4px solid #0AA;
+    }
+
+.animacaoButtonPendente {
+    flex-direction: column;
+    margin: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 2px solid #ef172c;
+    text-decoration: none;
+    color: #ef172c;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: .3s;
+}
+
+    .animacaoButtonPendente:hover {
+        color: #FFF;
+        background: #ef172c;
+        font-weight: bold;
+        font-size: 18px;
+        box-shadow: 0 3px 25px #bbb;
+        border: #ef172c;
+        border-bottom: 4px solid #0AA;
+    }

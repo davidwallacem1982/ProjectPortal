@@ -1,0 +1,285 @@
+﻿@model Portal.Core.Models.InfoSinistroViewModel
+
+@{
+    ViewData["Title"] = "Informações do Sinistro";
+}
+<link href="~/css/styleButtons.css" rel="stylesheet" />
+<link href="~/flexbox/css/VisualizarSinistro.css" rel="stylesheet" />
+<h2 class="cabecalhoInicial">Informações do Sinistro</h2>
+<div class="panel">
+    <!--Block Styled Form -->
+    <!--===================================================-->
+    <div class="panel-body justify-content-center" id="painelVisSinistro">
+        <div class="row areaSinistro statusSinistro">
+            <div class="panel-heading tituloSinistro" style="height: 30px;">
+                <span class="panel-title"><strong>Situação do processo:</strong></span>
+            </div>
+            <div class="control-label">
+                <span class="panel-title" style="font-size: 13px;">@Html.DisplayFor(model => model.UltimoStatus)</span>
+            </div>
+        </div>
+        <br />
+        <div class="row areaSinistro">
+            <div class="panel-heading tituloSinistro">
+                <span class="panel-title"><strong>Dados do Sinistro:</strong></span>
+            </div>
+            <div class="row justify-content-start" style="width:100%;margin-left: 0px;margin-right: 0px;">
+                <div class="col-md-auto">
+                    <div class="form-group">
+                        <label asp-for="Protocolo" class="control-label" style=" color:#fff;"></label>
+                        <input asp-for="Protocolo" class="form-control itemProtocolo" readonly="" />
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-group">
+                        <label asp-for="Cliente" class="control-label" style=" color:#fff;"></label>
+                        <input asp-for="Cliente" class="form-control" readonly="" />
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-group">
+                        <label asp-for="Seguradora" class="control-label itemLabel"></label>
+                        <input asp-for="Seguradora" class="form-control" readonly="" />
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-start" style="width:100%;margin-left: 0px;margin-right: 0px;">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Reguladora" class="control-label itemLabel"></label>
+                        <input asp-for="Reguladora" class="form-control" readonly="" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Ramos" class="control-label itemLabel"></label>
+                        <input asp-for="Ramos" class="form-control itemRamoNatureza" readonly="" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="TiposSinistros" class="control-label itemLabel"></label>
+                        <input asp-for="TiposSinistros" class="form-control itemEvento" readonly="" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="NaturezaSinistro" class="control-label itemLabel"></label>
+                        <input asp-for="NaturezaSinistro" class="form-control itemRamoNatureza" readonly="" />
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-start" style="width:100%;margin-left: 0px;margin-right: 0px;">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="ValorCarga" class="control-label itemLabel"></label>
+                        <input id="valorC" class="form-control itemValor" readonly="" value="@Model.ValorCarga" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="ValorSinistro" class="control-label itemLabel"></label>
+                        <input id="valorS" class="form-control itemValor" readonly="" value="@Model.ValorSinistro" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="ValorIndenizado" class="control-label itemLabel"></label>
+                        <input id="valorI" class="form-control itemValor" readonly="" value="@Model.ValorIndenizado" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="DataConclusao" class="control-label itemLabel"></label>
+                        <input asp-for="DataConclusao" type="text" class="form-control itemData" readonly="" />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="DataIndenizacao" class="control-label itemLabel"></label>
+                        <input asp-for="DataIndenizacao" type="text" class="form-control itemData" readonly="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row areaSinistro">
+            <div class="panel-heading" style="        width: 100%;
+        margin-left: 10px;
+        margin-right: 0px;
+">
+                <span style="padding: inherit; color:#fff;" class="panel-title"><strong>Operação:</strong></span>
+            </div>
+            <div class="row justify-content-start" style="width:100%;margin-left: 0px;margin-right: 0px;">
+                <div class="col-md">
+                    <div class="form-group">
+                        <label asp-for="CidadeOrigem" class="control-label itemLabel"></label>
+                        <input asp-for="CidadeOrigem" style="text-align:left;padding-right: 5px;padding-left: 5px;" class="form-control" readonly="" />
+                        @*<input style="text-align:center;padding-right: 5px;padding-left: 5px;" type="text" class="form-control" readonly="" placeholder="Vila Bela da Santíssima Trindade">*@
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label asp-for="UFOrigem" class="control-label itemLabel"></label>
+                        <input asp-for="UFOrigem" class="form-control itemUf" readonly="" />
+                        @*<input style="text-align:center;padding-right: 5px;padding-left: 5px;" type="text" class="form-control" readonly="" placeholder="SP">*@
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-group">
+                        <label asp-for="CidadeDestino" class="control-label itemLabel"></label>
+                        <input asp-for="CidadeDestino" style="text-align:left;padding-right: 5px;padding-left: 5px;" class="form-control" readonly="" />
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label asp-for="UFDestino" class="control-label itemLabel"></label>
+                        <input asp-for="UFDestino" type="text" class="form-control itemUf" readonly="" />
+                        @*<input style="text-align:center;padding-right: 5px;padding-left: 5px;" type="text" class="form-control" readonly="" placeholder="SP">*@
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-group">
+                        <label asp-for="Mecadoria" class="control-label itemLabel"></label>
+                        <input asp-for="Mecadoria" style="text-align:left;padding-right: 5px;padding-left: 5px;" type="text" class="form-control" readonly="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row areaSinistro">
+            <div class="panel-heading" style="width:100%;margin-left: 10px;margin-right: 0px;">
+                <span style="padding: inherit; color:#fff;" class="panel-title"><strong>Motoristas/Veículos:</strong></span>
+            </div>
+            <div class="row justify-content-start" style="width:100%;margin-left: 0px;margin-right: 0px;">
+                <div class="col-md">
+                    <div class="form-group">
+                        <label asp-for="NomeMotorista" class="control-label itemLabel"></label>
+                        <input asp-for="NomeMotorista" style="text-align:left;padding-right: 5px;padding-left: 5px;" class="form-control" readonly="" />
+                        @*<input style="text-align:center;padding-right: 5px;padding-left: 5px;" type="text" class="form-control" readonly="" placeholder="Vila Bela da Santíssima Trindade">*@
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="PlacaVeiculo" class="control-label itemLabel"></label>
+                        <input asp-for="PlacaVeiculo" class="form-control itemPlaca" readonly="" />
+                        @*<input style="text-align:center;padding-right: 5px;padding-left: 5px;" type="text" class="form-control" readonly="" placeholder="SP">*@
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="PlacaCarreta" class="control-label itemLabel"></label>
+                        <input asp-for="PlacaCarreta" class="form-control itemPlaca" readonly="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row areaSinistro">
+            <div class="panel-heading" style="width:100%;margin-left: 10px;margin-right: 0px;">
+                <span style="padding: inherit; color:#fff;" class="panel-title"><strong>Local:</strong></span>
+            </div>
+            <div class="row justify-content-start" style="width:100%;margin-left: 0px;margin-right: 0px;">
+                <div class="col-md">
+                    <div class="form-group">
+                        <label asp-for="LocalSinistro" class="control-label" style="color:#fff;"></label>
+                        <input asp-for="LocalSinistro" style="text-align:left;padding-right: 5px;padding-left: 5px;" class="form-control" readonly="" />
+                        @*<input style="text-align:center;padding-right: 5px;padding-left: 5px;" type="text" class="form-control" readonly="" placeholder="Vila Bela da Santíssima Trindade">*@
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <label asp-for="UFSinistro" class="control-label itemLabel"></label>
+                        <input asp-for="UFSinistro" class="form-control itemUf" readonly="" />
+                        @*<input style="text-align:center;padding-right: 5px;padding-left: 5px;" type="text" class="form-control" readonly="" placeholder="SP">*@
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-group">
+                        <label asp-for="CidadeSinistro" class="control-label itemLabel"></label>
+                        <input asp-for="CidadeSinistro" style="text-align:left;padding-right: 5px;padding-left: 5px;" class="form-control" readonly="" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div class="row justify-content-end" style="width:100%;margin-left: 0px;margin-right: 0px;">
+            <div id="divVoltarButton">
+                <button class="btn btn-primary colorbuttonPadrao" title="Documentos" onclick="Documentos()">
+                    <i class="far fa-file-alt"></i> Documentos
+                </button>
+                <button type="button" class="btn btn-primary colorbuttonPadrao" data-dismiss="modal" onclick="Voltar()">
+                    <i class="fa fa-undo-alt fa-fw"></i> Voltar
+                </button>
+                @*<form method="Index" action="/Sinistros">
+                         <button class="voltarButton" title="Voltar" type="submit">Voltar</button>
+                </form>*@
+            </div>
+        </div>
+    </div>
+    <!--===================================================-->
+    <!--End Block Styled Form -->
+</div>
+<!--jQuery [ REQUIRED ]-->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.maskMoney.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var valorc = $("#valorC").val();
+        var valors = $("#valorS").val();
+        var valori = $("#valorI").val();
+        var resultadC = MascaraMoedaValue("" + valorc + "",'.',','); //transformo em moeda novamente
+        $("#valorC").val("R$ "+resultadC);
+        var resultadoS = MascaraMoedaValue("" + valors + "",'.',','); //transformo em moeda novamente
+        $("#valorS").val("R$ "+resultadoS);
+        var resultadoI = MascaraMoedaValue("" + valori + "",'.',','); //transformo em moeda novamente
+        $("#valorI").val("R$ "+resultadoI);
+    });
+    function Voltar() {
+        window.document.location = '@HttpContextAccessor.HttpContext.Session.GetString("DefaultHome")';
+    }
+    function Documentos() {
+        window.document.location = '@Url.Action("Index","Documentos")'+'?sinistrosid=@Model.ID&protocolo=@Model.Protocolo'
+    }
+    //mascara para numeros completos
+    function MascaraMoedaValue(valor, SeparadorMilesimo, SeparadorDecimal){
+    var sep = 0;
+    var key = '';
+    var i = j = 0;
+    var len = len2 = 0;
+    var strCheck = '0123456789';
+    var aux = aux2 = '';
+ 
+    if (strCheck.indexOf(key) == -1) return false; // Chave inválida
+    len = valor.length;
+    for(i = 0; i < len; i++)
+    if ((valor.charAt(i) != '0') && (valor.charAt(i) != SeparadorDecimal)) break;
+    aux = '';
+    for(; i < len; i++)
+    if (strCheck.indexOf(valor.charAt(i))!=-1) aux += valor.charAt(i);
+    len = aux.length;
+    if (len == 0) valor = '';
+    if (len == 1) valor = '0'+ SeparadorDecimal + '0' + aux;
+    if (len == 2) valor = '0'+ SeparadorDecimal + aux;
+    if (len > 2) {
+    aux2 = '';
+    for (j = 0, i = len - 3; i >= 0; i--) {
+    if (j == 3) {
+    aux2 += SeparadorMilesimo;
+    j = 0;
+    }
+    aux2 += aux.charAt(i);
+    j++;
+    }
+    valor = '';
+    len2 = aux2.length;
+    for (i = len2 - 1; i >= 0; i--)
+    valor += aux2.charAt(i);
+    valor += SeparadorDecimal + aux.substr(len - 2, len);
+ 
+    return valor;
+    }
+    return false;
+    }
+</script>

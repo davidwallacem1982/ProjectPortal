@@ -1,0 +1,262 @@
+﻿@model Portal.Core.Models.InfoSinistroViewModel
+
+@{
+    ViewData["Title"] = "Documentos";
+}
+<h3 style="margin-left:1%; margin-top:-0.5%;">
+    Documentos - N° do Protocolo: @ViewBag.Protocolo
+</h3>
+<div style="height:20%;">
+</div>
+<div class="alert alert-success" id="msn-sucess" style="display:none; height:100%; margin-top:15px; font-size:10pt">
+    <h4>
+        <strong>Sucesso! &ensp;</strong>
+        <span id="sucessmsg"></span>
+    </h4>
+</div>
+<div class="alert alert-danger" id="err-alert" style="display:none; height:100%; margin-top:15px; font-size:10pt">
+    <h4>
+        <strong>Erro! &ensp;</strong>
+        <span id="errmsg"></span>
+    </h4>
+</div>
+<div id="ModalTabs" class="modal-dialog modal-lg" role="document" style="width:100%; max-width:100%;">
+    <div class="modal-content">
+        <div class="modal-body">
+            <ul class="nav nav-pills nav-justified" role="tablist">
+                <li id="tabDocPendentes" role="presentation" class="active" style="width:50%">
+                    <a href="#DocPendentes" role="tab" data-toggle="tab" onclick="Ativar(1);"><i class="fa fa-file-signature fa-fw"></i> Pendentes</a>
+                </li>
+                <li id="tabDocAtivos" role="presentation" style="width:49%">
+                    <a href="#DocAtivos" role="tab" data-toggle="tab" onclick="Ativar(2);"><i class="fas fa-file fa-fw"></i> Enviados</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <br />
+                <div id="DocAtivos" role="tabpanel" class="tab-pane">
+                    <table id="grdarquivos" class="display nowrap dataTable dtr-inline collapsed cell-border display compact hover" style="width:100%">
+                        <thead style="background-color:#337ab7; color:white">
+                            <tr>
+                                <th width="39%" data-priority="1">Título</th>
+                                <th width="39%" data-priority="3">Tipo</th>
+                                <th width="17%" data-priority="2" style="text-align:center;">Status</th>
+                                <th width="5%" data-priority="1" style="text-align:center;">Baixar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="DocPendentes" role="tabpanel" class="tab-pane active">
+                    <table id="grdarquivospendentes" class="display compact dataTable dtr-inline collapsed cell-border display compact hover" style="width:100%;">
+                        <thead style="background-color:#337ab7; color:white">
+                            <tr>
+                                <th>Tipo</th>
+                                <th style="width: 110px !important;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="btnAddArquivos" title="Adicionar Novo(s) Arquivo(s)" type="button" class="btn btn-primary colorbuttonPadrao" onclick="$('#myModal').modal('show'); $('#tiposArquivosId').val(0);">
+                <i class="fa fa-file fa-fw"></i>&ensp;Novo
+            </button>
+            <button type="button" title="Informações do Sinistro" class="btn btn-primary colorbuttonPadrao" onclick="Visualizar()">
+                <i class="fas fa-eye"></i>&ensp;Informações do Sinistro
+            </button>
+            <button type="button" title="Relatórios dos Sinistros" class="btn btn-primary colorbuttonPadrao" onclick="Voltar()">
+                <i class="fas fa-file-import"></i>&ensp;Retornar aos Relatórios
+            </button>
+        </div>
+    </div>
+    @using (Html.BeginForm("EnviarDocumentos", "Documentos", FormMethod.Post, new { id = "EnviarDocumento", @class = "form-horizontal", role = "form", encType = "multipart/form-data" }))
+    {
+        <div id="myModal" class="modal fade" role="dialog" data-backdrop="false">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content" style="background-color:#25475f; color:white; border-radius:10px;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" style="color:white; margin-right:1%;">&times;</button>
+                        <h4 class="modal-title" style="color:white;">&ensp; Adicionar Novo Documento</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-2"><h5 style="color:white;">Tipo:</h5></div>
+                            <div class="col-md-7">
+                                <select id="tiposArquivosId" name="tiposArquivosId" class="form-control">
+                                </select>
+                                <input type="hidden" id="sinistrosId" name="sinistrosId" value="@ViewBag.ID" />
+                                <input type="hidden" id="protocolo" name="protocolo" value="@ViewBag.Protocolo" />
+                            </div>
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-2">
+                            <h5 style="color:white;">Arquivo:</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <input style="margin-top:5px; margin-left:5px;" type="file" name="files" id="files" multiple />
+                        </div>
+                        <br /><br /><br /><br /><br />
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <button type="submit" class="btn" style="background-color: #337ab7!important;">&ensp;<span><i class="fas fa-save"></i>&ensp;Enviar</span></button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><span><i class="fa fa-ban"></i>&ensp;Cancelar</span></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+
+
+<script type="text/javascript">
+    /*javascript do Jquery Datatable Plugin*/
+    $(document).ready(function () {
+        //MakeDropDown("#tipodocid", 'Url.Action("JsonListarTiposArquivos", "Documentos")', 'Selecione...', 'Tipo', 'Id');
+
+        var url = '@Url.Action("JsonDocumentosSinistro", "Documentos")';
+        var tbDoc = $('#grdarquivos').DataTable({
+            "ajax": {
+                "data": {
+                    "sinistrosId": '@ViewBag.ID'
+                },
+                "type": "POST",
+                "url": url
+            },
+            "columns":
+            [
+                {
+                    render: function (data, type, full, meta) {
+                        return full.titulo+" - "+full.sequencial;
+                    },
+                    "responsivePriority": 1
+                },
+                {
+                    "data": "tipo",
+                    "responsivePriority": 4,
+                    "className": "hide_column"
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        var status = full.status;
+                        if (status == 1) {
+                            return '<button type="button" title="ARQUIVO APROVADO" class="btn" style="width:100%; cursor:default; background-color:#218838; color: white;">APROVADO <i class="fa fa-thumbs-o-up"></i></button>';
+                        }
+                        if (status == 2) {
+                            return '<button type="button" title="ARQUIVO EM ANÁLISE" class="btn btn-warning" style="width:100%; cursor:default; background-color:#ffcb00; color: white">EM ANÁLISE <i class="fa fa-refresh"></i></button>';
+                        }
+                        if (status == 3) {
+                            return '<button type="button" title="ARQUIVO RECUSADO" class="btn" style="width:100%; cursor:default;background-color:red; color: white;">RECUSADO <i class="fa  fa-thumbs-o-down"></i></button>';
+                        }
+                    },
+                    "responsivePriority": 2
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        var controller;
+                        if (full.atendimentoID == 0) {
+                            controller = 'sinistros'
+                        } else {
+                            controller = 'atendimentos'
+                        }
+                        return '<a download="' + full.titulo + '" href="https://maisprotecao.blob.core.windows.net/'+controller+'/' + full.url + '" target="_blank" title="BAIXAR ARQUIVO"><i class="fa fa-download fa-fw" style="cursor:pointer"></i>';
+                    },
+                    "responsivePriority": 3,
+                    className: 'dt-body-center'
+                },
+            ],
+            "language": portugues,
+            "responsive": responsivo,
+            "pageLength": 50,
+            "order": [0, 'asc'],
+            "autoWidth": true,
+            "sAjaxDataProp": ""
+        });
+        url = '@Url.Action("JsonDocumentosPendentes", "Documentos")';
+        var tbDocPendente = $('#grdarquivospendentes').DataTable({
+            "ajax": {
+                "data": {
+                    "sinistrosId": '@ViewBag.ID'
+                },
+                "type": "POST",
+                "url": url
+            },
+            "columns":
+            [
+                {
+                    "data": "tipo",
+                },
+                {
+                    render: function (data, type, full, meta) {
+                        return '<button type="button" title="Adicionar Arquivo" class="btn" style="background-color: #337ab7!important; color: white!important;" style="width: 84px !important;" onclick="AbrirModal('+full.tiposID+')"><i class="fa fa-plus-square"></i>&ensp;Adicionar</button>';
+                    },
+                    className: 'dt-body-center'
+                },
+            ],
+            "language": portugues,
+            "responsive": responsivo,
+            "pageLength": 50,
+            "order": [0, 'asc'],
+            "sAjaxDataProp": ""
+        });
+        util.dropdown("@Url.Action("JsonListarTiposArquivos", "Documentos")", $("#tiposArquivosId"), "Selecione um tipo...");
+
+        //Mensagem de Erro
+        var resposta = @ViewBag.resposta;
+        if (resposta == 1)
+        {
+             $("#sucessmsg").text("Arquivo(s) enviado(s) com sucesso!");
+            $("#msn-sucess").fadeTo(4000, 1000).slideUp(500, function ()
+            {
+                $("#msn-sucess").slideUp(1000);
+            });
+        }
+        else if(resposta == 2)
+        {
+            $("#errmsg").text("Selecione um arquivo!");
+            $("#err-alert").fadeTo(4000, 1000).slideUp(500, function ()
+            {
+                $("#err-alert").slideUp(1000);
+            });
+        }
+        else if(resposta == 3)
+        {
+            $("#errmsg").text("Selecione um tipo!");
+            $("#err-alert").fadeTo(4000, 1000).slideUp(500, function ()
+            {
+                $("#err-alert").slideUp(1000);
+            });
+        }
+
+    });
+
+    function Ativar(cod) {
+        if (cod == 1) {
+            $("#tabDocPendentes").addClass("active");
+            $("#tabDocAtivos").removeClass("active");
+        }
+        if (cod == 2) {
+            $("#tabDocPendentes").removeClass("active");
+            $("#tabDocAtivos").addClass("active");
+        }
+    }
+
+    function AbrirModal(tiposid) {
+        $('#myModal').modal('show');
+        $('#tiposArquivosId').val('' + tiposid + '');
+    }
+    function Voltar() {
+    window.document.location = '@HttpContextAccessor.HttpContext.Session.GetString("DefaultHome")';
+    }
+    function Visualizar() {
+    window.document.location = '@Url.Action("VisualizarSinistro", "Sinistros")/?id='+@ViewBag.ID;
+    }
+</script>
